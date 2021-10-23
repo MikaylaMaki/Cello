@@ -1,10 +1,10 @@
 # MVP TODO list:
 
-[] Make a Cello UI
+[*] Make a Cello UI
 
-[] Make it interactive with react
+[*] Make it interactive with react
 
-[] Make it send data somewhere with redux
+[*] Make it send data somewhere with redux
 
 [] Make that data change things usefully
 
