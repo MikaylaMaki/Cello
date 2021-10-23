@@ -1,9 +1,15 @@
 #MVP TODO list:
+
 [] Make a Cello UI
+
 [] Make it interactive with react
+
 [] Make it send data somewhere with redux
+
 [] Make that data change things usefully
+
 [] Hook automerge into it
+
 [] Hook local storage into it
 
 
