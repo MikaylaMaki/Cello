@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 
 import store from './store'
-import { Cello } from './Components/Cello';
+import { Cello } from './components/Cello';
 import './index.css';
 
 import reportWebVitals from './reportWebVitals';
