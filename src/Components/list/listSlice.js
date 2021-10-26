@@ -1,26 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit'
+import Automerge from 'automerge'
 
-const listSlice = createSlice({
-  name: 'lists',
-  initialState: {
-    byIds: {},
-    allIds: []
-  },
-  reducers: {
-    changeTitle(state, action) {
-      if ("id" in action.payload && "value" in action.payload) {
-        if (action.payload.id in state.byId) {
-          state.byId[action.payload.id].listTitle = action.payload.value;
-        } else {
-          console.error("No list with ID " + action.payload.id + " found");
-        }
+export const changeTitle = (data) => {
+  return { type: "list/changeTitle", payload: data}
+}
+
+const changeTitleR = (state, action) => {
+  if(action.type === "list/changeTitle") {
+    if ("id" in action.payload && "value" in action.payload) {
+      if (action.payload.id in state.lists.byId) {
+        return Automerge.change(state, doc => {
+          doc.lists.byId[action.payload.id].listTitle = action.payload.value;
+        })
       } else {
-        console.error("Action is malformed: " + action);
+        console.error("No list with ID " + action.payload.id + " found");
       }
-      return state;
+    } else {
+      console.error("Action is malformed: " + action);
     }
   }
-});
+  return state;
+};
 
-export const { changeTitle } = listSlice.actions;
-export default listSlice.reducer;
+export default changeTitleR;

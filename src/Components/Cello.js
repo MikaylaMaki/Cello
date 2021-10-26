@@ -6,7 +6,7 @@ export function Cello() {
 
   let listEls = lists.allIds.map((listId) => {
     let list = lists.byId[listId];
-    return <CelloList key={list.listTitle} list={list} listId={listId} />
+    return <CelloList key={list.listTitle} list={list} />
   })
 
   return (

@@ -1,0 +1,49 @@
+let demoState = {
+  cards: {
+    byId: {
+      "card1": {
+        id: "card1",
+        cardTitle: "card title 1"
+      },
+      "card2": {
+        id: "card2",
+        cardTitle: "card title 2"
+      },
+      "card3": {
+        id: "card3",
+        cardTitle: "card title 3"
+      },
+    },
+    allIds: [ "card1", "card2", "card3" ]
+  },
+  lists: {
+    byId: {
+      "list1": {
+        id: "list1",
+        listTitle: "list title 1",
+        cards: ["card1"]
+      },
+      "list2": {
+        id: "list2",
+        listTitle: "list title 2",
+        cards: ["card2", "card3"]
+      }
+    },
+    allIds: [ "list1", "list2" ]
+  }
+}
+if(persistedState == null) {
+let persistedState = {
+    cards: {
+      byId: {},
+      allIds: []
+    },
+    lists: {
+      byId: {},
+      allIds: []
+    },
+    storageLoader: {
+
+    }
+  }
+}

@@ -12,10 +12,10 @@ export function CelloList(props) {
   let cardEls = props.list.cards.map((cardId) => {
     let card = cards.byId[cardId];
     return (
-      <Card key={cardId} card={card} cardId={cardId} />
+      <Card key={cardId} card={card} />
     )
   })
-
+  
   return (
     <div className="list"
          style={{
@@ -32,7 +32,7 @@ export function CelloList(props) {
               paddingBottom: 0,
               paddingLeft: ".5em",
             }}>
-        <EditableText value={props.list.listTitle} onChange={(e) => {dispatch(changeTitle({id: props.listId, value: e.target.value}))}} />
+        <EditableText value={props.list.listTitle} onChange={(e) => {dispatch(changeTitle({id: props.list.id, value: e.target.value}))}} />
       </span>
         {cardEls}
     </div>
