@@ -1,0 +1,13 @@
+.card {
+  min-height: 1em;
+  padding: .25em .5em;
+  margin: .5em;
+  border: 1px solid purple;
+  display: flex;
+  justify-content: space-between;
+}
+
+.new.card {
+  text-align: left;
+  flex-grow: 1;
+}

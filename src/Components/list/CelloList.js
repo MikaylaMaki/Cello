@@ -1,9 +1,11 @@
 import React from 'react';
+import { RemoveItem } from '../RemoveItem';
 import { Card } from '../card/Card';
+import { NewCard } from '../card/NewCard';
 import { EditableText } from '../EditableText'
 import { useSelector, useDispatch } from 'react-redux'
-import { changeTitle } from './listSlice'
-
+import { changeTitle, removeList } from './listSlice'
+import "./list.css"
 
 export function CelloList(props) {
   let cards = useSelector((state) => {return state.cards});
@@ -12,29 +14,18 @@ export function CelloList(props) {
   let cardEls = props.list.cards.map((cardId) => {
     let card = cards.byId[cardId];
     return (
-      <Card key={cardId} card={card} />
+      <Card key={cardId} card={card} listId={props.list.id} />
     )
   })
-  
+
   return (
-    <div className="list"
-         style={{
-           minWidth: "3in",
-           margin: "1em",
-           border: "1px solid purple"
-         }}>
-      <span className="list-title"
-            style={{
-              padding: ".25em",
-              margin: ".25em",
-              display: "inline-block",
-              marginBottom: 0,
-              paddingBottom: 0,
-              paddingLeft: ".5em",
-            }}>
+    <div className="list">
+      <span className="list-title">
         <EditableText value={props.list.listTitle} onChange={(e) => {dispatch(changeTitle({id: props.list.id, value: e.target.value}))}} />
+        <RemoveItem action={removeList} id={props.list.id} />
       </span>
         {cardEls}
+        <NewCard listId={props.list.id} />
     </div>
   );
 }

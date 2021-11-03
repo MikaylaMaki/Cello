@@ -1,13 +1,15 @@
 import { useDispatch } from 'react-redux'
 import { EditableText } from '../EditableText'
-import { changeTitle } from './cardSlice'
+import { changeTitle, removeCard } from './cardSlice'
+import { RemoveItem } from '../RemoveItem'
+import "./card.css"
 
 export function Card(props) {
     const dispatch = useDispatch();
     return (
-      <div style={{ minHeight: "1em", padding: ".25em", margin: ".5em", border: "1px solid purple"}}
-           className="card">
+      <div className="card">
         <EditableText value={props.card.cardTitle} onChange={(e) => dispatch(changeTitle({id: props.card.id, value: e.target.value}))} />
+        <RemoveItem action={removeCard} id={{cardId: props.card.id, listId: props.listId}} />
       </div>
     )
 }

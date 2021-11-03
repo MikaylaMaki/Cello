@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 
 export function EditableText(props) {
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocused] = useState(props.focused ? true : false);
   const [text, setText] = useState(props.value);
 
   let change = function(e) {
@@ -16,6 +16,9 @@ export function EditableText(props) {
         props.onChange(e)
         setFocused(false);
       }
+    } else if(e.key === "Escape" || e.keyCode === 27) {
+      e.preventDefault();
+      setFocused(false);
     }
   }
 

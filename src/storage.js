@@ -8,15 +8,15 @@ const demoData = () => {
            {
              cards: {
                byId: {
-                 "card1": {
+                 "card0": {
                    id: "card1",
                    cardTitle: "card title 1"
                  },
-                 "card2": {
+                 "card1": {
                    id: "card2",
                    cardTitle: "card title 2"
                  },
-                 "card3": {
+                 "card2": {
                    id: "card3",
                    cardTitle: "card title 3"
                  },
@@ -25,13 +25,13 @@ const demoData = () => {
              },
              lists: {
                byId: {
-                 "list1": {
-                   id: "list1",
+                 "list0": {
+                   id: "list0",
                    listTitle: "list title 1",
                    cards: ["card1"]
                  },
-                 "list2": {
-                   id: "list2",
+                 "list1": {
+                   id: "list1",
                    listTitle: "list title 2",
                    cards: ["card2", "card3"]
                  }
@@ -71,7 +71,6 @@ export const blankState = () => {
 export const loadState = (dispatch) => {
   localforage.getItem(stateKey)
     .then((val) => {
-      console.log("here " + val);
       if(val === null) {
         //Swap this out for 'leave the state alone' at some point
         dispatch(dataLoaded(Automerge.save(demoData())));
@@ -83,6 +82,6 @@ export const loadState = (dispatch) => {
 
 export const saveState = (state) => {
   localforage.setItem(stateKey, Automerge.save(state))
-    // .then(() => console.log("Successfully saved"))
+    .then(() => console.log("Successfully saved"))
     .catch(e => console.error("Error saving state:" + e));
 }
