@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch } from 'react-redux'
-import "./remove-item.css";
 
 export function RemoveItem(props) {
   const dispatch = useDispatch();

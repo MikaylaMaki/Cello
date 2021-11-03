@@ -1,8 +1,8 @@
 import React from 'react';
-import { RemoveItem } from '../RemoveItem';
+import { RemoveItem } from '../utils/RemoveItem';
 import { Card } from '../card/Card';
 import { NewCard } from '../card/NewCard';
-import { EditableText } from '../EditableText'
+import { EditableText } from '../utils/EditableText'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeTitle, removeList } from './listSlice'
 import "./list.css"

@@ -1,6 +1,22 @@
+/*
+ * base.css is mainly for providing functional UI primitives that components can use
+ * to create consistent, DRY, styling. At some point this should probably be a
+ * less file with variables for pre-defined UI state quanta. But that sounds hard.
+ *
+ */
+
+ .main-title-container .edit-text__text {
+   font-size: 1.5em
+ }
+
+ .main-title-container .edit-text__container {
+   margin-left: .75em;
+ }
+
 .interaction {
+  /*Interactions are usually buttons, which need to have their style reset*/
   background: rgba(0,0,0,0);
-  border-style: none;
+  border-style: dotted;
 }
 
 .click.interaction:hover {
@@ -8,8 +24,9 @@
 }
 
 .new {
-  border-style: dotted;
-  /*Fix button defaults*/
   font-size: 1em;
-  background-color: rgba(0,0,0,0);
+}
+/*Avoid overrides whenever possible. Where impossible, make the heirarchy explicit*/
+.interaction.new {
+  border-style: dotted;
 }

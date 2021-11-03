@@ -1,0 +1,48 @@
+.board-button-container {
+  align-items: center;
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  width: 5em;
+  border-right: 1px solid purple;
+  background-color: white;
+  z-index: 2;
+  border-top: 1px solid purple;
+  border-left: 1px solid purple;
+}
+
+.board-buffer {
+  min-width: 5em;
+}
+
+.board-button {
+  height: 3em;
+  line-height: 3em;
+  width: 3em;
+  font-size: 1em;
+  background-color: rgba(0,0,0,0);
+  color: black;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid purple;
+  margin-bottom: 1em;
+  position: relative;
+}
+
+.board-button .remove-item {
+  position: absolute;
+  top: -.5em;
+  right: -.5em;
+  font-size: 1em;
+  padding: 0;
+  width: 19px;
+  height: 22px;
+  line-height: 0;
+  background-color: white;
+  text-align: center;
+}
+
+.board-button.selected {
+  border-style: solid;
+}

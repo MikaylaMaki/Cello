@@ -6,6 +6,15 @@ const stateKey = 'state'
 const demoData = () => {
   return Automerge.from(
            {
+             boards: {
+               byId: {
+                 "board0": {
+                   title: "Test Board",
+                   lists: ["list0", "list1"]
+                 }
+               },
+               allIds: ["board0"]
+             },
              cards: {
                byId: {
                  "card0": {
@@ -57,6 +66,10 @@ export const loadReducer = (state, action) => {
 
 export const blankState = () => {
   return Automerge.from({
+    boards: {
+      byId: {},
+      allIds: []
+    },
     cards: {
       byId: {},
       allIds: []
