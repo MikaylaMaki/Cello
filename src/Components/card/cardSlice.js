@@ -1,34 +1,25 @@
 import Automerge from 'automerge'
-import { makeReducer, iterateReducers, removeFromList } from "../../redux-utils.js";
+import { makeReducer, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
 
-const changeTitleObj = makeReducer("card/changeTitle", function(state, payload) {
-  if ("id" in payload && "value" in payload) {
-    if (payload.id in state.cards.byId) {
-      return Automerge.change(state, doc => {
-        doc.cards.byId[payload.id].cardTitle = payload.value;
-      })
-    } else {
-      console.error("No card with ID " + payload.id + " found");
-    }
-  } else {
-    console.error("card/changeTitle action is malformed");
-  }
-  return state;
-});
+const changeTitleObj = makeTitleReducer("card", "cards");
 
 const addCardObj = makeReducer("card/new", function(state, payload) {
   if ("listId" in payload) {
-    return Automerge.change(state, doc => {
-      let cardId = nanoid();
-      doc.cards.byId[cardId] = {
-        id: cardId,
-        cardTitle: "New card",
-      }
-      doc.cards.allIds.push(cardId);
+    if(state.lists.allIds.includes(payload.listId )) {
+      return Automerge.change(state, doc => {
+        let cardId = nanoid();
+        doc.cards.byId[cardId] = {
+          id: cardId,
+          title: "New card",
+        }
+        doc.cards.allIds.push(cardId);
 
-      doc.lists.byId[payload.listId].cards.push(cardId);
-    })
+        doc.lists.byId[payload.listId].cards.push(cardId);
+      })
+    } else {
+      console.error("Could not find list with ID: " + payload.listId);
+    }
   } else {
     console.error("card/new action is malformed");
   }

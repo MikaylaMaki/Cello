@@ -30,7 +30,7 @@
   position: relative;
 }
 
-.board-button .remove-item {
+.board-button-interaction-container .remove-item {
   position: absolute;
   top: -.5em;
   right: -.5em;
@@ -41,6 +41,10 @@
   line-height: 0;
   background-color: white;
   text-align: center;
+}
+
+.board-button-interaction-container {
+  position: relative;
 }
 
 .board-button.selected {

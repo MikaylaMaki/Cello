@@ -1,3 +1,5 @@
+import Automerge from 'automerge'
+
 export const makeReducer = (actionName, reducerFunction) => {
   return {
     reducer: function(state, action) {
@@ -24,6 +26,23 @@ export const iterateReducers = (reducers) => {
     return state;
   }
 };
+
+export const makeTitleReducer = (modelName, modelKey) => {
+  return makeReducer(modelName + "/changeTitle", function(state, payload) {
+    if ("id" in payload && "value" in payload) {
+      if (payload.id in state[modelKey].byId) {
+        return Automerge.change(state, doc => {
+          doc[modelKey].byId[payload.id].title = payload.value;
+        })
+      } else {
+        console.error("No " + modelName + " with ID " + payload.id + " found");
+      }
+    } else {
+      console.error(modelName + "/changeTitle action is malformed");
+    }
+    return state;
+  });
+}
 
 /// Can only be called from an automerge proxy context
 export const removeFromList = (list, item) => {

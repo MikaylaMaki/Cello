@@ -1,21 +1,16 @@
 import cardReducer from './components/card/cardSlice'
 import listReducer from './components/list/listSlice'
+import boardReducer from './components/board/boardSlice'
 import { createStore } from 'redux'
 import {loadState, saveState, blankState, loadReducer} from './storage'
 import throttle from 'lodash/throttle'
+import { iterateReducers } from './redux-utils.js'
 
 
 const store = createStore(
-  (old, action) => {
-    old = loadReducer(old, action);
-    old = cardReducer(old, action);
-    old = listReducer(old, action);
-    return old;
-  },
+  iterateReducers([loadReducer, cardReducer, listReducer, boardReducer]),
   blankState(),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-
-console.dir(blankState());
 
 loadState(store.dispatch);
 

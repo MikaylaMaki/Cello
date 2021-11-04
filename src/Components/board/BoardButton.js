@@ -1,4 +1,5 @@
 import { RemoveItem } from "../utils/RemoveItem"
+import { removeBoard } from './boardSlice'
 
 export function BoardButton(props) {
   let title = props.board.title;
@@ -8,6 +9,9 @@ export function BoardButton(props) {
 
   let classes = "board-button interaction click " + (props.selected ? "selected" : "");
   return (
-    <button className={classes}><RemoveItem id={props.board.id} action={() => {}} />{title}</button>
+    <div className="board-button-interaction-container">
+      <button className={classes}>{title}</button>
+      <RemoveItem id={props.board.id} action={removeBoard} />
+    </div>
   )
 }

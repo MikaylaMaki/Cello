@@ -3,14 +3,22 @@ import { NewBoard } from './NewBoard';
 import './board.css'
 
 export function Boards(props) {
-  let boardEls = props.boards.allIds.map((boardId) => {
-    let board = props.boards.byId[boardId];
-    if(boardId === "board0") {
-      return <BoardButton selected={true} key={boardId} board={board} />
-    } else {
-      return <BoardButton key={boardId} board={board} />
-    }
-  })
+  let boardEls = null;
+  let clickMe = null;
+  if(props.boards.allIds.length > 0) {
+    boardEls = props.boards.allIds.map((boardId) => {
+      let board = props.boards.byId[boardId];
+      if(boardId === props.selected.id) {
+        return <BoardButton selected={true} key={boardId} board={board} />
+      } else {
+        return <BoardButton key={boardId} board={board} />
+      }
+    })
+  } else {
+    clickMe = (
+      <div style={{color: "grey"}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑<br/>Click Me!</div>
+    )
+  }
 
   return (
     <div className="board-container">
@@ -27,6 +35,7 @@ export function Boards(props) {
           </div>
           {boardEls}
           <NewBoard />
+          {clickMe}
       </div>
       <div className="board-buffer" style={{minWidth: "5em"}}></div>
     </div>
