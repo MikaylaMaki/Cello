@@ -36,8 +36,11 @@ export const upgradeDataFormat = (data) => {
       });
     });
   }
-  if(data.version === 3) {
-    //TODO: Clean up refrence-less card objects
+  if(data.version === 3) { // s m h
+    data = Automerge.change(data, (d) => {
+      d.boards.byId["oN8Qv57UZE60PJUPmuPO4"].lists.deleteAt(3);
+      d.version += 3;
+    });
   }
   return data;
 }

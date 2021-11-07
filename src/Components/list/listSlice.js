@@ -1,66 +1,70 @@
 import Automerge from 'automerge'
-import { makeReducer, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
+import { makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
 
 const changeTitleObj = makeTitleReducer("list", "lists");
 
-const newListObj = makeReducer("list/new", function(state, payload) {
-  if("boardId" in payload) {
-    if(payload.boardId in state.boards.byId) {
-      return Automerge.change(state, doc => {
-        let listId = nanoid();
-        doc.lists.byId[listId] = {
-          id: listId,
-          title: "New List",
-          cards: []
-        }
-        doc.lists.allIds.push(listId);
-
-        //Add to parent
-        doc.boards.byId[payload.boardId].lists.push(listId);
-      })
-    } else {
-      console.error("list/new: Could not find board with ID:" + payload.boardId);
+const newListObj = makeReducerAction("list/new", function(state, payload) {
+  return Automerge.change(state, doc => {
+    doc.lists.byId[payload.listId] = {
+      id: payload.listId,
+      title: "New List",
+      cards: []
     }
-  } else {
-    console.error("list/new action is malformed");
-  }
+    doc.lists.allIds.push(payload.listId);
+  });
 });
 
-const removeListObj = makeReducer("list/remove", function(state, payload) {
-  if ("id" in payload && "boardId" in payload.id && "listId" in payload.id) {
-    if (payload.id.listId in state.lists.byId && payload.id.boardId in state.boards.byId) {
-      return Automerge.change(state, doc => {
-        //remove card allIds
-        doc.cards.allIds = doc.cards.allIds.filter(
-          (cardId) => !doc.lists.byId[payload.id.listId].cards.includes(cardId)
-        );
-
-        //remove card byIds
-        doc.lists.byId[payload.id.listId].cards.forEach((cardId, i) => {
-          delete doc.cards.byId[cardId];
-        });
-
-        //delete byId object
-        delete doc.lists.byId[payload.id.listId];
-
-        //remove allIds entry
-        removeFromList(doc.lists.allIds, payload.id.listId);
-
-        //remove from board list
-        removeFromList(doc.boards.byId[payload.id.boardId].lists, payload.id.listId);
-      })
-    } else {
-      console.error("No list with ID " + payload.id + " found");
-    }
-  } else {
-    console.error("list/remove action is malformed");
-  }
-  return state;
+const removeListObj = makeReducerAction("list/remove", function(state, payload) {
+  return Automerge.change(state, (doc) => {
+    delete doc.lists.byId[payload.listId];
+    removeFromList(doc.lists.allIds, payload.listId);
+  });
 });
+
+const removeBoardReducer = makeSimpleReducer("board/remove", (state, payload) => {
+  return Automerge.change(state, doc => {
+    payload.lists.forEach((listId) => {
+      delete doc.lists.byId[listId];
+      removeFromList(doc.lists.allIds, listId)
+    });
+  });
+});
+
+const removeCardReducer = makeSimpleReducer("card/remove", (state, payload) => {
+  return Automerge.change(state, (doc) => {
+    removeFromList(doc.lists.byId[payload.listId].cards, payload.cardId);
+  });
+})
+
+const addCardReducer = makeSimpleReducer("card/new", (state, payload) => {
+  return Automerge.change(state, (doc) => {
+    doc.lists.byId[payload.listId].cards.push(payload.cardId);
+  });
+});
+
+const removeListThunk = (idObj) => (dispatch, getState) => {
+  const state = getState();
+  const listId = idObj.id.listId;
+  const [ boardId ] = state.boards.allIds.filter(
+      (boardId) => state.boards.byId[boardId].lists.includes(listId)
+  );
+  const cards = state.lists.byId[listId].cards;
+
+  dispatch(removeListObj.action({listId, boardId, cards}));
+};
+
+const newListThunk = (boardId) => (dispatch, getState) => {
+  let listId = nanoid();
+  dispatch(newListObj.action({boardId, listId}));
+};
+
 
 
 export const changeTitle = changeTitleObj.action;
-export const newList = newListObj.action;
-export const removeList = removeListObj.action;
-export default iterateReducers([changeTitleObj.reducer, newListObj.reducer, removeListObj.reducer]);
+export const newList = newListThunk;
+export const removeList = removeListThunk;
+export default iterateReducers([
+  changeTitleObj.reducer, newListObj.reducer, removeListObj.reducer,
+  removeBoardReducer, removeCardReducer, addCardReducer
+]);

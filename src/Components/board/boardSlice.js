@@ -1,59 +1,65 @@
 import Automerge from 'automerge'
 // eslint-disable-next-line
-import { makeReducer, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
+import { makeReducerAction, iterateReducers, removeFromList, makeTitleReducer, makeSimpleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
 
 const changeTitleObj = makeTitleReducer("board", "boards");
 
-const newBoardObj = makeReducer("board/new", function(state, payload) {
+const newBoardObj = makeReducerAction("board/new", function(state, payload) {
   return Automerge.change(state, doc => {
-    let boardId = nanoid();
-    doc.boards.byId[boardId] = {
-      id: boardId,
+    doc.boards.byId[payload.boardId] = {
+      id: payload.boardId,
       title: "New Board",
       lists: []
     }
-    doc.boards.allIds.push(boardId);
+    doc.boards.allIds.push(payload.boardId);
   })
 });
 
-const removeBoardObj = makeReducer("board/remove", function(state, payload) {
-  if ("id" in payload) {
-    if (payload.id in state.boards.byId) {
-      return Automerge.change(state, doc => {
-        //Remove lists and associated cards
-        doc.boards.byId[payload.id].lists.forEach((listId, i) => {
-          //remove card allIds
-          doc.cards.allIds = doc.cards.allIds.filter(
-            (cardId) => !doc.lists.byId[listId].cards.includes(cardId)
-          );
-
-          //remove card byIds
-          doc.lists.byId[listId].cards.forEach((cardId, i) => {
-            delete doc.cards.byId[cardId];
-          });
-
-          // remove list from allIds
-          removeFromList(doc.lists.allIds, listId);
-          //remove list from byIds
-          delete doc.lists.byId[listId];
-        });
-
-        // delete byId object
-        delete doc.boards.byId[payload.id];
-        // remove allIds entry
-        removeFromList(doc.boards.allIds, payload.id)
-      })
-    } else {
-      console.error("No board with ID " + JSON.stringify(payload.id) + " found");
-    }
-  } else {
-    console.error("board/remove action is malformed");
-  }
-  return state;
+const removeBoardObj = makeReducerAction("board/remove", function(state, payload) {
+   return Automerge.change(state, doc => {
+    delete doc.boards.byId[payload.board];
+    removeFromList(doc.boards.allIds, payload.board)
+   });
 });
 
+const removeListReducer = makeSimpleReducer("list/remove", (state, payload) => {
+  return Automerge.change(state, (doc) => {
+    removeFromList(doc.boards.byId[payload.boardId].lists, payload.listId);
+  });
+});
+
+const addListReducer = makeSimpleReducer("list/new", (state, payload) => {
+  return Automerge.change(state, (doc) => {
+    doc.boards.byId[payload.boardId].lists.push(payload.listId);
+  });
+});
+
+//TODO: Refactor <RemoveItem> to use the new thunks and get rid of the ID object
+const removeBoardThunk = (idObj) => {
+  return (dispatch, getState) => {
+    const boardId = idObj.id;
+    const state = getState();
+    const lists = state.boards.byId[boardId].lists;
+    const cards = lists.flatMap((listId) => state.lists.byId[listId].cards);
+    dispatch(removeBoardObj.action({
+      board: boardId,
+      lists: lists,
+      cards: cards
+    }))
+  }
+}
+
+const newBoardThunk = () => {
+  return (dispatch, getState) => {
+    const boardId = nanoid();    
+    dispatch(newBoardObj.action({ boardId }))
+  }
+}
+
 export const changeTitle = changeTitleObj.action;
-export const newBoard = newBoardObj.action;
-export const removeBoard = removeBoardObj.action;
-export default iterateReducers([changeTitleObj.reducer, newBoardObj.reducer, removeBoardObj.reducer]);
+export const newBoard = newBoardThunk;
+export const removeBoard = removeBoardThunk;
+export default iterateReducers([
+  changeTitleObj.reducer, newBoardObj.reducer, removeBoardObj.reducer,
+  removeListReducer, addListReducer]);

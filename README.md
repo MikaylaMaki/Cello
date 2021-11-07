@@ -1,3 +1,11 @@
+Currently working on:
+* Cleaning and documenting things
+* Getting the boards data structure in
+  * Refactoring the lists display to use a specific boards
+  * Refactoring the remove and add actions to hook up the boards and follow
+    references
+* Get Drag and Drop working
+
 Technologies:
 
 automerge CRDTs

@@ -2,30 +2,34 @@ import { CelloList } from './list/CelloList';
 import { Boards } from './board/Boards'
 import { BoardTitle } from './board/BoardTitle'
 import { NewList } from './list/NewList';
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import './base.css'
 
 export function Cello() {
   let boards = useSelector((state) => {return state.boards});
-  let selectedBoard = null;
+  // let selectedBoard = null;
   let boardTitleEl = null;
   let listsEl = null;
   let lists = useSelector((state) => {return state.lists});
+  let currentBoard =
+    boards.allIds.length ?
+        boards.byId[boards.allIds[0]] :
+        null;
 
-  if(boards.allIds.length !== 0) {
-    selectedBoard = boards.byId[boards.allIds[0]]; //TODO pull this from a URL route
-    boardTitleEl = <BoardTitle board={selectedBoard} />
+  if(currentBoard !== null) {
+    boardTitleEl = <BoardTitle board={currentBoard} />
 
-    let listEls = selectedBoard.lists.map((listId) => {
+    let listEls = currentBoard.lists.map((listId) => {
       let list = lists.byId[listId];
-      return <CelloList key={listId} list={list} boardId={selectedBoard.id} />
+      return <CelloList key={listId} list={list} boardId={currentBoard.id} />
     })
 
     listsEl = (
       <div style={{  display: "flex", alignItems: "flex-start"}}
           className="list-container">
           {listEls}
-          <NewList selectedId={selectedBoard.id}/>
+          <NewList selectedId={currentBoard.id}/>
       </div>
     )
   }
@@ -33,7 +37,7 @@ export function Cello() {
 
   return (
     <div className="app-container" style={{display: "flex"}}>
-      <Boards boards={boards} selected={selectedBoard} />
+      <Boards boards={boards} selected={currentBoard} />
       <div className="main-view-container">
         <div className="main-title-container"
           style={{

@@ -1,13 +1,16 @@
 import Automerge from 'automerge'
 
-export const makeReducer = (actionName, reducerFunction) => {
+export const makeSimpleReducer = (actionName, reducerFunction) =>
+  (state, action) => {
+    if(action.type === actionName) {
+      state = reducerFunction(state, action.payload);
+    }
+    return state;
+  }
+
+export const makeReducerAction = (actionName, reducerFunction) => {
   return {
-    reducer: function(state, action) {
-      if(action.type === actionName) {
-        state = reducerFunction(state, action.payload);
-      }
-      return state;
-    },
+    reducer: makeSimpleReducer(actionName, reducerFunction),
     action: function(data) {
       if(typeof data !== "object" && typeof data !== "undefined") {
         console.error("Action data should be in an object: " + actionName);
@@ -28,7 +31,7 @@ export const iterateReducers = (reducers) => {
 };
 
 export const makeTitleReducer = (modelName, modelKey) => {
-  return makeReducer(modelName + "/changeTitle", function(state, payload) {
+  return makeReducerAction(modelName + "/changeTitle", function(state, payload) {
     if ("id" in payload && "value" in payload) {
       if (payload.id in state[modelKey].byId) {
         return Automerge.change(state, doc => {

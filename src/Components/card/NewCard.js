@@ -7,7 +7,7 @@ export function NewCard(props) {
 
   return (
     <button className="card new click interaction"
-         onClick={(e) => {dispatch(newCard({listId: props.listId}))}}>
+         onClick={(e) => {dispatch(newCard(props.listId))}}>
          <div className="card-title">
           + Add a new card
          </div>

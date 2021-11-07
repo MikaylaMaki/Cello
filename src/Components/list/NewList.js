@@ -8,7 +8,7 @@ export function NewList(props) {
 
   return (
     <button className="list new click interaction"
-        onClick={(e) => dispatch(newList({boardId: props.selectedId}))}>
+        onClick={(e) => dispatch(newList(props.selectedId))}>
          <label className="list-title">
           + Add a new list
          </label>

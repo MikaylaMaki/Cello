@@ -1,16 +1,19 @@
+import thunk from 'redux-thunk'
+import throttle from 'lodash/throttle'
+import { createStore, applyMiddleware } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension';
 import cardReducer from './components/card/cardSlice'
 import listReducer from './components/list/listSlice'
 import boardReducer from './components/board/boardSlice'
-import { createStore } from 'redux'
 import {loadState, saveState, blankState, loadReducer} from './storage'
-import throttle from 'lodash/throttle'
 import { iterateReducers } from './redux-utils.js'
-
 
 const store = createStore(
   iterateReducers([loadReducer, cardReducer, listReducer, boardReducer]),
   blankState(),
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+  composeWithDevTools(
+    applyMiddleware(thunk)
+));
 
 loadState(store.dispatch);
 
