@@ -1,6 +1,8 @@
 import { BoardButton } from './BoardButton';
-import { NewBoard } from './NewBoard';
+// import { NewBoard } from './NewBoard';
+import { NewItem } from '../utils/NewItem';
 import './board.css'
+import { newBoard } from './boardSlice';
 
 export function Boards(props) {
   let boardEls = null;
@@ -34,7 +36,7 @@ export function Boards(props) {
             <span className="logo" style={{fontSize: "2em"}}>🎻</span>
           </div>
           {boardEls}
-          <NewBoard />
+          <NewItem action={newBoard} />
           {clickMe}
       </div>
       <div className="board-buffer" style={{minWidth: "5em"}}></div>

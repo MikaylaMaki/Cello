@@ -5,15 +5,13 @@
   padding: .25em;
   display: flex;
   flex-flow: column;
-  padding-top: 1em;
+  padding-top: .5em;
 }
 
 .list-title {
   padding: 0 .5em;
   display: flex;
   justify-content: space-between;
-  /* Added to margin-top from card for a total of 1em spacing */
-  margin-bottom: .5em; 
 }
 
 .new.list {
