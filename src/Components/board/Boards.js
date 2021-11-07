@@ -10,10 +10,10 @@ export function Boards(props) {
   if(props.boards.allIds.length > 0) {
     boardEls = props.boards.allIds.map((boardId) => {
       let board = props.boards.byId[boardId];
-      if(boardId === props.selected.id) {
-        return <BoardButton selected={true} key={boardId} board={board} />
+      if(props.selected && boardId === props.selected) {
+        return <BoardButton selected={true} key={boardId} board={board} setCurrent={props.setCurrent} />
       } else {
-        return <BoardButton key={boardId} board={board} />
+        return <BoardButton key={boardId} board={board} setCurrent={props.setCurrent}/>
       }
     })
   } else {

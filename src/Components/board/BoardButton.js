@@ -10,7 +10,7 @@ export function BoardButton(props) {
   let classes = "board-button interaction click " + (props.selected ? "selected" : "");
   return (
     <div className="board-button-interaction-container">
-      <button className={classes}>{title}</button>
+      <button className={classes} onClick={(e) => props.setCurrent(props.board.id)}>{title}</button>
       <RemoveItem id={props.board.id} action={removeBoard} />
     </div>
   )

@@ -5,6 +5,21 @@
  *
  */
 
+.main-title-container {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  position: fixed;
+  width: 100vw;
+  right: 0;
+  top: 0;
+  height: 4em;
+  z-index: 1;
+  border-bottom: 1px solid purple;
+  border-top: 1px solid purple;
+  background-color: white;
+}
+
  .main-title-container .edit-text__text {
    font-size: 1.5em
  }

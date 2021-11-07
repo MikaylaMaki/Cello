@@ -11,10 +11,15 @@ export function BoardTitle(props) {
       <span style={{color: "gray", fontSize: "1.25em"}}>&nbsp;← Click any text to edit it</span>
     )
   }
-  return (
-    <>
-    <SimpleTextProperty prop={props.board.title} action={changeTitle} id={props.board.id} />
-    {tutorialEl}
-    </>
-  )
+  if(props.boardId) {
+    let board = state.boards.byId[props.boardId];
+    return (
+      <>
+      <SimpleTextProperty prop={board.title} action={changeTitle} id={board.id} />
+      {tutorialEl}
+      </>
+    );
+  } else {
+    return null;
+  }
 }

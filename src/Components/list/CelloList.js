@@ -9,6 +9,7 @@ import "./list.css"
 
 export function CelloList(props) {
   let cards = useSelector((state) => {return state.cards});
+
   if(typeof props.list === "undefined") {
     return "BAD DATA IN BOARD";
   }
