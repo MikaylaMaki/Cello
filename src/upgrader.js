@@ -15,8 +15,8 @@ export const upgradeDataFormat = (data) => {
       d.boards.byId[boardId].id = boardId;
       d.boards.byId[boardId].title = "First Board";
       d.boards.byId[boardId].lists = [];
-      data.lists.allIds.forEach((listIds, i) => {
-        d.boards.byId[boardId].lists.push(listIds);
+      data.lists.allIds.forEach((lists, i) => {
+        d.boards.byId[boardId].lists.push(lists);
       });
 
       d.boards.allIds.push(boardId);
@@ -30,9 +30,9 @@ export const upgradeDataFormat = (data) => {
         d.cards.byId[cardId].title = data.cards.byId[cardId].cardTitle;
         delete d.cards.byId[cardId].cardTitle;
       });
-      data.lists.allIds.forEach((listId, i) => {
-        d.lists.byId[listId].title = data.lists.byId[listId].listTitle;
-        delete d.lists.byId[listId].listTitle;
+      data.lists.allIds.forEach((list, i) => {
+        d.lists.byId[list].title = data.lists.byId[list].listTitle;
+        delete d.lists.byId[list].listTitle;
       });
     });
   }

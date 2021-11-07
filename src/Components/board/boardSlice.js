@@ -5,18 +5,18 @@ import { nanoid } from 'nanoid'
 
 const changeTitleObj = makeTitleReducer("board", "boards");
 
-const newBoardObj = makeReducerAction("board/new", function(state, payload) {
+const newBoardObj = makeReducerAction("board/new", (state, payload) => {
   return Automerge.change(state, doc => {
-    doc.boards.byId[payload.boardId] = {
-      id: payload.boardId,
+    doc.boards.byId[payload.board] = {
+      id: payload.board,
       title: "New Board",
       lists: []
     }
-    doc.boards.allIds.push(payload.boardId);
+    doc.boards.allIds.push(payload.board);
   })
 });
 
-const removeBoardObj = makeReducerAction("board/remove", function(state, payload) {
+const removeBoardObj = makeReducerAction("board/remove", (state, payload) => {
    return Automerge.change(state, doc => {
     delete doc.boards.byId[payload.board];
     removeFromList(doc.boards.allIds, payload.board)
@@ -25,35 +25,30 @@ const removeBoardObj = makeReducerAction("board/remove", function(state, payload
 
 const removeListReducer = makeSimpleReducer("list/remove", (state, payload) => {
   return Automerge.change(state, (doc) => {
-    removeFromList(doc.boards.byId[payload.boardId].lists, payload.listId);
+    removeFromList(doc.boards.byId[payload.board].lists, payload.list);
   });
 });
 
 const addListReducer = makeSimpleReducer("list/new", (state, payload) => {
   return Automerge.change(state, (doc) => {
-    doc.boards.byId[payload.boardId].lists.push(payload.listId);
+    doc.boards.byId[payload.board].lists.push(payload.list);
   });
 });
 
 //TODO: Refactor <RemoveItem> to use the new thunks and get rid of the ID object
-const removeBoardThunk = (idObj) => {
+const removeBoardThunk = (board) => {
   return (dispatch, getState) => {
-    const boardId = idObj.id;
     const state = getState();
-    const lists = state.boards.byId[boardId].lists;
-    const cards = lists.flatMap((listId) => state.lists.byId[listId].cards);
-    dispatch(removeBoardObj.action({
-      board: boardId,
-      lists: lists,
-      cards: cards
-    }))
+    const lists = state.boards.byId[board].lists;
+    const cards = lists.flatMap((list) => state.lists.byId[list].cards);
+    dispatch(removeBoardObj.action({board, lists, cards }))
   }
 }
 
 const newBoardThunk = () => {
   return (dispatch, getState) => {
-    const boardId = nanoid();    
-    dispatch(newBoardObj.action({ boardId }))
+    const board = nanoid();    
+    dispatch(newBoardObj.action({ board }))
   }
 }
 

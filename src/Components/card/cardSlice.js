@@ -4,54 +4,53 @@ import { nanoid } from 'nanoid'
 
 const changeTitleObj = makeTitleReducer("card", "cards");
 
-const addCardObj = makeReducerAction("card/new", function(state, payload) {
+const addCardObj = makeReducerAction("card/new", (state, payload) => {
   return Automerge.change(state, doc => {
-    doc.cards.byId[payload.cardId] = {
-      id: payload.cardId,
+    doc.cards.byId[payload.card] = {
+      id: payload.card,
       title: "New card",
     }
-    doc.cards.allIds.push(payload.cardId);
+    doc.cards.allIds.push(payload.card);
   });
 });
 
-const removeCardObj = makeReducerAction("card/remove", function(state, payload) {
+const removeCardObj = makeReducerAction("card/remove", (state, payload) => {
   return Automerge.change(state, doc => {
-    delete doc.cards.byId[payload.cardId];
-    removeFromList(doc.cards.allIds, payload.cardId)
+    delete doc.cards.byId[payload.card];
+    removeFromList(doc.cards.allIds, payload.card)
   })
 });
 
 const removeBoardReducer = makeSimpleReducer("board/remove", (state, payload) => {
   return Automerge.change(state, doc => {
-    payload.cards.forEach((cardId) => {
-      delete doc.cards.byId[cardId];
-      removeFromList(doc.cards.allIds, cardId)
+    payload.cards.forEach((card) => {
+      delete doc.cards.byId[card];
+      removeFromList(doc.cards.allIds, card)
     });
   });
 });
 
 const removeListReducer = makeSimpleReducer("list/remove", (state, payload) => {
   return Automerge.change(state, doc => {
-    payload.cards.forEach((cardId) => {
-      delete doc.cards.byId[cardId];
-      removeFromList(doc.cards.allIds, cardId)
+    payload.cards.forEach((card) => {
+      delete doc.cards.byId[card];
+      removeFromList(doc.cards.allIds, card)
     });
   });
 });
 
 
-const removeCardThunk = (idObj) => (dispatch, getState) => {
+const removeCardThunk = (card) => (dispatch, getState) => {
   const state = getState();
-  const cardId = idObj.id.cardId;
-  const [ listId ] = state.lists.allIds.filter(
-    (listId) => state.lists.byId[listId].cards.includes(cardId)
+  const [ list ] = state.lists.allIds.filter(
+    (list) => state.lists.byId[list].cards.includes(card)
   );
-  dispatch(removeCardObj.action({cardId, listId}));
+  dispatch(removeCardObj.action({card, list}));
 };
 
-const newCardThunk = (listId) => (dispatch, getState) => {
-  const cardId = nanoid();
-  dispatch(addCardObj.action({cardId, listId}));
+const newCardThunk = (list) => (dispatch, getState) => {
+  const card = nanoid();
+  dispatch(addCardObj.action({card, list}));
 }
 
 export const changeTitle = changeTitleObj.action;

@@ -7,7 +7,7 @@ export function Card(props) {
     return (
       <div className="card">
         <SimpleTextProperty action={ changeTitle } prop={ props.card.title } id={ props.card.id } />
-        <RemoveItem action={removeCard} id={{cardId: props.card.id, listId: props.listId}} />
+        <RemoveItem action={removeCard} id={props.card.id} />
       </div>
     )
 }

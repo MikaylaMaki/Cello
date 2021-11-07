@@ -6,60 +6,59 @@ const changeTitleObj = makeTitleReducer("list", "lists");
 
 const newListObj = makeReducerAction("list/new", function(state, payload) {
   return Automerge.change(state, doc => {
-    doc.lists.byId[payload.listId] = {
-      id: payload.listId,
+    doc.lists.byId[payload.list] = {
+      id: payload.list,
       title: "New List",
       cards: []
     }
-    doc.lists.allIds.push(payload.listId);
+    doc.lists.allIds.push(payload.list);
   });
 });
 
 const removeListObj = makeReducerAction("list/remove", function(state, payload) {
   return Automerge.change(state, (doc) => {
-    delete doc.lists.byId[payload.listId];
-    removeFromList(doc.lists.allIds, payload.listId);
+    delete doc.lists.byId[payload.list];
+    removeFromList(doc.lists.allIds, payload.list);
   });
 });
 
 const removeBoardReducer = makeSimpleReducer("board/remove", (state, payload) => {
   return Automerge.change(state, doc => {
-    payload.lists.forEach((listId) => {
-      delete doc.lists.byId[listId];
-      removeFromList(doc.lists.allIds, listId)
+    payload.lists.forEach((list) => {
+      delete doc.lists.byId[list];
+      removeFromList(doc.lists.allIds, list)
     });
   });
 });
 
 const removeCardReducer = makeSimpleReducer("card/remove", (state, payload) => {
+  console.dir(payload);
   return Automerge.change(state, (doc) => {
-    removeFromList(doc.lists.byId[payload.listId].cards, payload.cardId);
+    removeFromList(doc.lists.byId[payload.list].cards, payload.card);
   });
 })
 
 const addCardReducer = makeSimpleReducer("card/new", (state, payload) => {
   return Automerge.change(state, (doc) => {
-    doc.lists.byId[payload.listId].cards.push(payload.cardId);
+    doc.lists.byId[payload.list].cards.push(payload.card);
   });
 });
 
-const removeListThunk = (idObj) => (dispatch, getState) => {
+const removeListThunk = (list) => (dispatch, getState) => {
+  console.dir(list);
   const state = getState();
-  const listId = idObj.id.listId;
-  const [ boardId ] = state.boards.allIds.filter(
-      (boardId) => state.boards.byId[boardId].lists.includes(listId)
+  const [ board ] = state.boards.allIds.filter(
+      (board) => state.boards.byId[board].lists.includes(list)
   );
-  const cards = state.lists.byId[listId].cards;
+  const cards = state.lists.byId[list].cards;
 
-  dispatch(removeListObj.action({listId, boardId, cards}));
+  dispatch(removeListObj.action({list, board, cards}));
 };
 
-const newListThunk = (boardId) => (dispatch, getState) => {
-  let listId = nanoid();
-  dispatch(newListObj.action({boardId, listId}));
+const newListThunk = (board) => (dispatch, getState) => {
+  let list = nanoid();
+  dispatch(newListObj.action({board, list}));
 };
-
-
 
 export const changeTitle = changeTitleObj.action;
 export const newList = newListThunk;

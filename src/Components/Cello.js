@@ -1,14 +1,13 @@
 import { CelloList } from './list/CelloList';
 import { Boards } from './board/Boards'
 import { BoardTitle } from './board/BoardTitle'
-import { NewList } from './list/NewList';
-import { useState } from 'react'
+import { NewItem } from './utils/NewItem';
+import { newList } from './list/listSlice'
 import { useSelector } from 'react-redux'
 import './base.css'
 
 export function Cello() {
   let boards = useSelector((state) => {return state.boards});
-  // let selectedBoard = null;
   let boardTitleEl = null;
   let listsEl = null;
   let lists = useSelector((state) => {return state.lists});
@@ -29,7 +28,7 @@ export function Cello() {
       <div style={{  display: "flex", alignItems: "flex-start"}}
           className="list-container">
           {listEls}
-          <NewList selectedId={currentBoard.id}/>
+          <NewItem action={newList} actionArg={currentBoard.id} />
       </div>
     )
   }
