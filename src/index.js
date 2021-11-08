@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
-
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import store from './store'
 import { Cello } from './components/Cello';
 import './index.css';
@@ -11,7 +12,9 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Cello />
+      <DndProvider backend={HTML5Backend} >
+        <Cello />
+      </DndProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

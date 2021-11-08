@@ -29,7 +29,7 @@ export function Cello() {
           setcurrentBoardId(state.boards.allIds[0]); 
         }
       } else { //Otherwise make sure current is also not present
-        if(window.location.pathname != "/") {
+        if(window.location.pathname !== "/") {
           window.history.pushState(null, null, "/");
         }
         setcurrentBoardId("");

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 
 export function EditableText(props) {
   const [focused, setFocused] = useState(props.focused ? true : false);
   const [text, setText] = useState(props.value);
+
+  useEffect(() => { //Keep state up to date with model changes
+    setText(props.value);
+  }, [props.value]);
 
   let change = function(e) {
     setText(e.target.value);

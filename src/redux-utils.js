@@ -64,3 +64,9 @@ export const removeFromList = (list, item) => {
     return false;
   }
 }
+//TODO evaluate all ESLINT hides
+//TODO Make drag and drop work across lists
+//TODO find where to put this
+export const arrayMove = (array, from, to) => {
+  array.splice(to, 0, array.splice(from, 1)[0]);
+};

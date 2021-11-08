@@ -1,5 +1,5 @@
 import Automerge from 'automerge'
-import { makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
+import { arrayMove, makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
 
 const changeTitleObj = makeTitleReducer("card", "cards");
@@ -13,6 +13,14 @@ const addCardObj = makeReducerAction("card/new", (state, payload) => {
     doc.cards.allIds.push(payload.card);
   });
 });
+
+const moveCardObj = makeReducerAction("card/move", (state, payload) => {
+  return Automerge.change(state, doc => {
+    let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
+    arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.index);
+  });
+});
+
 
 const removeCardObj = makeReducerAction("card/remove", (state, payload) => {
   return Automerge.change(state, doc => {
@@ -53,7 +61,12 @@ const newCardThunk = (list) => (dispatch, getState) => {
   dispatch(addCardObj.action({card, list}));
 }
 
+const moveCardThunk = (card, list, index) => (dispatch, getState) => {
+  dispatch(moveCardObj.action({card, list, index}));
+}
+
 export const changeTitle = changeTitleObj.action;
 export const newCard = newCardThunk;
 export const removeCard = removeCardThunk;
-export default iterateReducers([changeTitleObj.reducer, addCardObj.reducer, removeCardObj.reducer, removeBoardReducer, removeListReducer]);
+export const moveCard = moveCardThunk;
+export default iterateReducers([changeTitleObj.reducer, addCardObj.reducer, removeCardObj.reducer, moveCardObj.reducer, removeBoardReducer, removeListReducer]);
