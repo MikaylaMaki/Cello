@@ -35,7 +35,6 @@ const addListReducer = makeSimpleReducer("list/new", (state, payload) => {
   });
 });
 
-//TODO: Refactor <RemoveItem> to use the new thunks and get rid of the ID object
 const removeBoardThunk = (board) => {
   return (dispatch, getState) => {
     const state = getState();
