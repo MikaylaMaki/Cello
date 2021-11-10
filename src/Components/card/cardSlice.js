@@ -1,5 +1,5 @@
 import Automerge from 'automerge'
-import { arrayMove, makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
+import { makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer, makeSimpleAction } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
 
 const changeTitleObj = makeTitleReducer("card", "cards");
@@ -13,14 +13,6 @@ const addCardObj = makeReducerAction("card/new", (state, payload) => {
     doc.cards.allIds.push(payload.card);
   });
 });
-
-const moveCardObj = makeReducerAction("card/move", (state, payload) => {
-  return Automerge.change(state, doc => {
-    let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
-    arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.index);
-  });
-});
-
 
 const removeCardObj = makeReducerAction("card/remove", (state, payload) => {
   return Automerge.change(state, doc => {
@@ -47,6 +39,8 @@ const removeListReducer = makeSimpleReducer("list/remove", (state, payload) => {
   });
 });
 
+//Don't need to implement the reducers as the card doesn't actually have it's positional data
+const moveCardAction = makeSimpleAction("card/move"); 
 
 const removeCardThunk = (card) => (dispatch, getState) => {
   const state = getState();
@@ -62,11 +56,11 @@ const newCardThunk = (list) => (dispatch, getState) => {
 }
 
 const moveCardThunk = (card, list, index) => (dispatch, getState) => {
-  dispatch(moveCardObj.action({card, list, index}));
+  dispatch(moveCardAction({card, list, index}));
 }
 
 export const changeTitle = changeTitleObj.action;
 export const newCard = newCardThunk;
 export const removeCard = removeCardThunk;
 export const moveCard = moveCardThunk;
-export default iterateReducers([changeTitleObj.reducer, addCardObj.reducer, removeCardObj.reducer, moveCardObj.reducer, removeBoardReducer, removeListReducer]);
+export default iterateReducers([changeTitleObj.reducer, addCardObj.reducer, removeCardObj.reducer, removeBoardReducer, removeListReducer]);

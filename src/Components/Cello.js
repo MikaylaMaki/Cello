@@ -34,8 +34,6 @@ export function Cello() {
         }
         setcurrentBoardId("");
       }
-        
-  //eslint-disable-next-line
   }, []));
 
   if(boards.allIds.includes(currentBoardId)) {

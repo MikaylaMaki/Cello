@@ -1,5 +1,4 @@
 import Automerge from 'automerge'
-// eslint-disable-next-line
 import { makeReducerAction, iterateReducers, removeFromList, makeTitleReducer, makeSimpleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
 

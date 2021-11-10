@@ -1,6 +1,7 @@
 import Automerge from 'automerge'
 import { makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
+import { arrayMove } from '../../utils'
 
 const changeTitleObj = makeTitleReducer("list", "lists");
 
@@ -44,6 +45,13 @@ const addCardReducer = makeSimpleReducer("card/new", (state, payload) => {
   });
 });
 
+const moveCardReducer = makeSimpleReducer("card/move", (state, payload) => {
+  return Automerge.change(state, doc => {
+    let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
+    arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.index);
+  });
+});
+
 const removeListThunk = (list) => (dispatch, getState) => {
   console.dir(list);
   const state = getState();
@@ -65,5 +73,5 @@ export const newList = newListThunk;
 export const removeList = removeListThunk;
 export default iterateReducers([
   changeTitleObj.reducer, newListObj.reducer, removeListObj.reducer,
-  removeBoardReducer, removeCardReducer, addCardReducer
+  removeBoardReducer, removeCardReducer, addCardReducer, moveCardReducer
 ]);

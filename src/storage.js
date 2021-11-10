@@ -57,51 +57,51 @@ export const saveState = (state) => {
 }
 
 
-// eslint-disable-next-line
-const demoData = () => {
-  return Automerge.from(
-           {
-             boards: {
-               byId: {
-                 "board0": {
-                   id: "board0",
-                   title: "Test Board",
-                   lists: ["list0", "list1"]
-                 }
-               },
-               allIds: ["board0"]
-             },
-             cards: {
-               byId: {
-                 "card0": {
-                   id: "card1",
-                   title: "card title 1"
-                 },
-                 "card1": {
-                   id: "card2",
-                   title: "card title 2"
-                 },
-                 "card2": {
-                   id: "card3",
-                   title: "card title 3"
-                 },
-               },
-               allIds: [ "card1", "card2", "card3" ]
-             },
-             lists: {
-               byId: {
-                 "list0": {
-                   id: "list0",
-                   title: "list title 1",
-                   cards: ["card1"]
-                 },
-                 "list1": {
-                   id: "list1",
-                   listTitle: "list title 2",
-                   cards: ["card2", "card3"]
-                 }
-               },
-               allIds: [ "list1", "list2" ]
-             }
-           });
-}
+
+// const demoData = () => {
+//   return Automerge.from(
+//            {
+//              boards: {
+//                byId: {
+//                  "board0": {
+//                    id: "board0",
+//                    title: "Test Board",
+//                    lists: ["list0", "list1"]
+//                  }
+//                },
+//                allIds: ["board0"]
+//              },
+//              cards: {
+//                byId: {
+//                  "card0": {
+//                    id: "card1",
+//                    title: "card title 1"
+//                  },
+//                  "card1": {
+//                    id: "card2",
+//                    title: "card title 2"
+//                  },
+//                  "card2": {
+//                    id: "card3",
+//                    title: "card title 3"
+//                  },
+//                },
+//                allIds: [ "card1", "card2", "card3" ]
+//              },
+//              lists: {
+//                byId: {
+//                  "list0": {
+//                    id: "list0",
+//                    title: "list title 1",
+//                    cards: ["card1"]
+//                  },
+//                  "list1": {
+//                    id: "list1",
+//                    listTitle: "list title 2",
+//                    cards: ["card2", "card3"]
+//                  }
+//                },
+//                allIds: [ "list1", "list2" ]
+//              }
+//            });
+// }

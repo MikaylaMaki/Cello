@@ -1,31 +1,33 @@
 import { RemoveItem } from '../utils/RemoveItem';
 import { NewItem } from '../utils/NewItem';
 import { Card } from '../card/Card';
-import { useSelector } from 'react-redux'
+import { useSelector, useStore } from 'react-redux'
 import { changeTitle, removeList } from './listSlice'
 import { SimpleTextProperty } from '../utils/SimpleTextProperty'
 import { newCard } from '../card/cardSlice'
 // import { useDrop } from 'react-dnd'
 import "./list.css"
-import { useState } from 'react';
-
-const arrayMove = (array, from, to) => {
-  array.splice(to, 0, array.splice(from, 1)[0]);
-};
+import { useEffect, useState } from 'react';
+import { arrayMove, arraysEqual } from '../../utils'
 
 export function CelloList(props) {
+  let store = useStore();
   let cards = useSelector((state) => {return state.cards});
   const [ourCards, setOurCards] = useState(props.list.cards);
 
-  //TODO currently experiencing the memory bug we had with boards. Using in-memory useState() objects
-  //here, instead of the proper IDs-and-queries that fixed it last time. Too tired to implement the fix tho....
-  const move = (listId, cardId, index) => {
-    let arrayCopy = [...ourCards];
+  useEffect(() => store.subscribe(() => {
+    let state = store.getState();
+    if(!arraysEqual(state.lists.byId[props.list.id].cards, ourCards)) {
+      setOurCards(state.lists.byId[props.list.id].cards);
+    }
+  }), [ourCards, props.list.id, store])
+
+  const move = (listId, cardId, index) => setOurCards((prevOurCards) => {
+    let arrayCopy = [...prevOurCards];
     let cardIndex = arrayCopy.indexOf(cardId);
     arrayMove(arrayCopy, cardIndex, index);
     setOurCards(arrayCopy);
-  }
-
+  })
 
   let cardEls = ourCards.map((cardId, i) => {
     let card = cards.byId[cardId];

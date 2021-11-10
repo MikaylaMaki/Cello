@@ -8,16 +8,20 @@ export const makeSimpleReducer = (actionName, reducerFunction) =>
     return state;
   }
 
+export const makeSimpleAction = (actionName) =>
+  (data) => {
+    if(typeof data !== "object" && typeof data !== "undefined") {
+      console.error("Action data should be in an object: " + actionName);
+      data = {data: data}; //Repair the error for the user
+    }
+    return { type: actionName, payload: data}
+  }
+
+//'Legacy' API
 export const makeReducerAction = (actionName, reducerFunction) => {
   return {
     reducer: makeSimpleReducer(actionName, reducerFunction),
-    action: function(data) {
-      if(typeof data !== "object" && typeof data !== "undefined") {
-        console.error("Action data should be in an object: " + actionName);
-        data = {data: data};
-      }
-      return { type: actionName, payload: data}
-    }
+    action: makeSimpleAction(actionName)
   }
 }
 
@@ -64,9 +68,4 @@ export const removeFromList = (list, item) => {
     return false;
   }
 }
-//TODO evaluate all ESLINT hides
 //TODO Make drag and drop work across lists
-//TODO find where to put this
-export const arrayMove = (array, from, to) => {
-  array.splice(to, 0, array.splice(from, 1)[0]);
-};
