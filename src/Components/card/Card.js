@@ -1,8 +1,8 @@
 import { SimpleTextProperty } from '../utils/SimpleTextProperty'
-import { changeTitle, removeCard, moveCard } from './cardSlice'
+import { changeTitle, removeCard } from './cardSlice'
 import { RemoveItem } from '../utils/RemoveItem'
 import { useRef } from 'react'
-import { useDispatch } from 'react-redux'
+// import { useDispatch } from 'react-redux'
 import { useDrag } from 'react-dnd'
 import { useDrop } from 'react-dnd'
 // import { useState } from 'react'
@@ -10,8 +10,9 @@ import "./card.css"
 
 export function Card(props) {
   let ref = useRef(null);
-  let dispatch = useDispatch();
+  // let dispatch = useDispatch();
   
+  //TODO refactor this into a custom hook
   const originalIndex = props.index;
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD",
@@ -26,13 +27,12 @@ export function Card(props) {
         props.move(item.listId, item.cardId, item.originalIndex);
       }
     }
-  }));
+  }), [originalIndex]);
 
   const [, drop] = useDrop(() => ({
       accept: "CARD",
       drop(item, monitor) {
-        console.dir(item.cardId, item.listId, item.index);
-        dispatch(moveCard(item.cardId, item.listId, item.index));
+        // dispatch(moveCard(item.listId, item.cardId, item.index, props.list));
       },
       hover(item, monitor) { //From: https://react-dnd.github.io/react-dnd/examples/sortable/simple
         if (!ref.current) {
@@ -40,6 +40,7 @@ export function Card(props) {
         }
         const dragIndex = item.index;
         const hoverIndex = props.index;
+        const hoverList = props.list;
         // Don't replace items with themselves
         if (dragIndex === hoverIndex) {
             return;
@@ -67,7 +68,7 @@ export function Card(props) {
             return;
         }
         // Time to actually perform the action
-        props.move(item.listId, item.cardId, hoverIndex);
+        props.move(item.listId, item.cardId, hoverIndex, hoverList);
         // Note: we're mutating the monitor item here!
         // Generally it's better to avoid mutations,
         // but it's good here for the sake of performance
@@ -75,7 +76,7 @@ export function Card(props) {
         item.index = hoverIndex;
     }
     }),
-    [props.index]
+    [props.index, props.list]
   );
   drag(drop(ref));
 

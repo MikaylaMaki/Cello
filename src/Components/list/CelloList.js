@@ -1,38 +1,48 @@
 import { RemoveItem } from '../utils/RemoveItem';
 import { NewItem } from '../utils/NewItem';
 import { Card } from '../card/Card';
-import { useSelector, useStore } from 'react-redux'
+import { useSelector/*, useStore */} from 'react-redux'
 import { changeTitle, removeList } from './listSlice'
 import { SimpleTextProperty } from '../utils/SimpleTextProperty'
 import { newCard } from '../card/cardSlice'
 // import { useDrop } from 'react-dnd'
 import "./list.css"
-import { useEffect, useState } from 'react';
-import { arrayMove, arraysEqual } from '../../utils'
+// import { useEffect, useState } from 'react';
+// import { arrayMove, arraysEqual } from '../../utils'
 
 export function CelloList(props) {
-  let store = useStore();
+  // let store = useStore();
   let cards = useSelector((state) => {return state.cards});
-  const [ourCards, setOurCards] = useState(props.list.cards);
+  // const [ourCards, setOurCards] = useState(props.list.cards);
 
-  useEffect(() => store.subscribe(() => {
-    let state = store.getState();
-    if(!arraysEqual(state.lists.byId[props.list.id].cards, ourCards)) {
-      setOurCards(state.lists.byId[props.list.id].cards);
-    }
-  }), [ourCards, props.list.id, store])
+  //TODO: Make boards DnD-able
+  //TODO: Make lists DnD-able
+  
+  // useEffect(() => store.subscribe(() => {
+  //   let state = store.getState();
+  //   if(state.lists.byId.hasOwnProperty(props.list.id)) {
+  //     if(!arraysEqual(state.lists.byId[props.list.id].cards, ourCards)) {
+  //       setOurCards(state.lists.byId[props.list.id].cards);
+  //     }
+  //   } else {
+  //     setOurCards(null);
+  //   }
+  // }), [ourCards, props.list.id, store])
 
-  const move = (listId, cardId, index) => setOurCards((prevOurCards) => {
-    let arrayCopy = [...prevOurCards];
-    let cardIndex = arrayCopy.indexOf(cardId);
-    arrayMove(arrayCopy, cardIndex, index);
-    setOurCards(arrayCopy);
-  })
+  // //Signature is supposed to mean 'From list1.card, move to list2.index', rewrite signature and move this up
+  // const move = (cardListId, cardId, index, targetListId) => setOurCards((prevOurCards) => {
+  //   if(cardListId === props.list.id) {
+  //     let arrayCopy = [...prevOurCards];
+  //     let cardIndex = arrayCopy.indexOf(cardId);
+  //     arrayMove(arrayCopy, cardIndex, index);
+  //     return arrayCopy;
+  //   }
+  // })
 
-  let cardEls = ourCards.map((cardId, i) => {
+  let cardEls = props.list.cards.map((cardId, i) => {
     let card = cards.byId[cardId];
     return (
-      <Card key={cardId} card={card} list={props.list.id} move={move} listId={props.list.id} index={i} />
+      <Card key={cardId} card={card} list={props.list.id} move={props.moveFunc} listId={props.list.id} index={i} />
     )
   })
 
