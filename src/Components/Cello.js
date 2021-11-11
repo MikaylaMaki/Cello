@@ -6,10 +6,6 @@ import './base.css'
 import { useEffect, useState } from 'react';
 
 export function Cello() {
-  let state = useSelector((state) => state);
-  let store = useStore();
-  let lists = state.lists;
-  let boards = state.boards;
   let boardTitleEl = null;
   let listsEl = null;
 
@@ -40,8 +36,7 @@ export function Cello() {
     boardTitleEl = <BoardTitle boardId={currentBoardId} />
 
     listsEl = (
-      <Lists lists={boards.byId[currentBoardId].lists.map((listId) => lists.byId[listId])} 
-             boardId={currentBoardId} />
+      <Lists boardId={currentBoardId} />
     );
   }
 

@@ -69,9 +69,14 @@ const newListThunk = (board) => (dispatch, getState) => {
   dispatch(newListObj.action({board, list}));
 };
 
+const selectListIds = (state) => {
+  return state.lists.allIds;
+}
+
 export const changeTitle = changeTitleObj.action;
 export const newList = newListThunk;
 export const removeList = removeListThunk;
+export const selectListIds = selectListIds;
 export default iterateReducers([
   changeTitleObj.reducer, newListObj.reducer, removeListObj.reducer,
   removeBoardReducer, removeCardReducer, addCardReducer, moveCardReducer
