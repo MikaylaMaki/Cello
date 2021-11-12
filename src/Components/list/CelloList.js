@@ -1,8 +1,8 @@
 import { RemoveItem } from '../utils/RemoveItem';
 import { NewItem } from '../utils/NewItem';
 import { Card } from '../card/Card';
-import { useSelector/*, useStore */} from 'react-redux'
-import { changeTitle, removeList } from './listSlice'
+import { useSelector } from 'react-redux'
+import { changeTitle, removeList, selectList } from './listSlice'
 import { SimpleTextProperty } from '../utils/SimpleTextProperty'
 import { newCard } from '../card/cardSlice'
 // import { useDrop } from 'react-dnd'
@@ -12,7 +12,8 @@ import "./list.css"
 
 export function CelloList(props) {
   // let store = useStore();
-  let cards = useSelector((state) => {return state.cards});
+  let list = useSelector(selectList(props.listId));
+  // console.dir([list, props.listId]);
   // const [ourCards, setOurCards] = useState(props.list.cards);
 
   //TODO: Make boards DnD-able
@@ -39,21 +40,20 @@ export function CelloList(props) {
   //   }
   // })
 
-  let cardEls = props.list.cards.map((cardId, i) => {
-    let card = cards.byId[cardId];
+  let cardEls = props.cardIds.map((cardId, i) => {
     return (
-      <Card key={cardId} card={card} list={props.list.id} move={props.moveFunc} listId={props.list.id} index={i} />
+      <Card key={cardId} moveCard={props.moveCard} cardId={cardId} listId={list.id} index={i} />
     )
   })
 
   return (
     <div className="list">
       <span className="list-title">
-        <SimpleTextProperty prop={props.list.title} id={props.list.id} action={changeTitle} />
-        <RemoveItem action={removeList} id={props.list.id} />
+        <SimpleTextProperty prop={list.title} id={list.id} action={changeTitle} />
+        <RemoveItem action={removeList} id={list.id} />
       </span>
       {cardEls}
-      <NewItem action={newCard} actionArg={props.list.id} />
+      <NewItem action={newCard} actionArg={list.id} />
     </div>
   );
 }

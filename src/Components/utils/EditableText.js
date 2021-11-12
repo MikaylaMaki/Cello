@@ -17,7 +17,9 @@ export function EditableText(props) {
     if(e.key === "Enter" || e.keyCode === 13) {
       e.preventDefault();
       if(props.onChange) {
-        props.onChange(e)
+        if(e.target.value) {
+          props.onChange(e)
+        }
         setFocused(false);
       }
     } else if(e.key === "Escape" || e.keyCode === 27) {

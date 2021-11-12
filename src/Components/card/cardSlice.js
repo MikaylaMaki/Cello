@@ -34,7 +34,6 @@ const removeListReducer = makeSimpleReducer("list/remove", (state, payload) => {
   return Automerge.change(state, doc => {
     payload.cards.forEach((card) => {
       delete doc.cards.byId[card];
-      removeFromList(doc.cards.allIds, card)
     });
   });
 });
@@ -55,8 +54,24 @@ const newCardThunk = (list) => (dispatch, getState) => {
   dispatch(addCardObj.action({card, list}));
 }
 
-const moveCardThunk = (card, list, index) => (dispatch, getState) => {
-  dispatch(moveCardAction({card, list, index}));
+const moveCardThunk = (card, list, toIndex, toList) => (dispatch, getState) => {
+  dispatch(moveCardAction({card, list, toIndex, toList}));
+}
+
+export const selectCardIds = (listId) => (state) => {
+  return state.lists.byId[listId].cards;
+};
+
+export const selectCard = (cardId) => (state) => {
+  return state.cards.byId[cardId];
+};
+
+export const selectCardsByLists = (boardId) => (state) => {
+  let s = state.boards.byId[boardId].lists.reduce((obj, listId) => {
+    obj[listId] = state.lists.byId[listId].cards;
+    return obj;
+  }, {});
+  return s;
 }
 
 export const changeTitle = changeTitleObj.action;

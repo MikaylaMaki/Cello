@@ -1,21 +1,24 @@
 import { Lists } from './list/Lists';
 import { Boards } from './board/Boards'
 import { BoardTitle } from './board/BoardTitle'
-import { useSelector, useStore } from 'react-redux'
 import './base.css'
 import { useEffect, useState } from 'react';
+import { useSelector, useStore } from 'react-redux';
+import { selectBoardsInclude } from './board/boardSlice';
 
 export function Cello() {
   let boardTitleEl = null;
   let listsEl = null;
-
+  let store = useStore();
   let [currentBoardId, setcurrentBoardId] = useState(window.location.pathname.replace(/^\/|\/$/g, ''));
+  let isBoardIncluded = useSelector(selectBoardsInclude(currentBoardId));
 
   const setBoard = (boardId) => {
     window.history.pushState(null, null, boardId);
     setcurrentBoardId(boardId);
   }
 
+  //TODO see if we can refactor this with the new 'selectors + simple virtual state' paradigm
   useEffect(() => store.subscribe(() => {
       let state = store.getState();
       
@@ -32,18 +35,19 @@ export function Cello() {
       }
   }, []));
 
-  if(boards.allIds.includes(currentBoardId)) {
+  
+  if(isBoardIncluded) {
     boardTitleEl = <BoardTitle boardId={currentBoardId} />
 
     listsEl = (
-      <Lists boardId={currentBoardId} />
+      <Lists boardId={currentBoardId} key={currentBoardId} />
     );
   }
 
 
   return (
     <div className="app-container" style={{display: "flex"}}>
-      <Boards boards={boards} selected={currentBoardId} setCurrent={setBoard} />
+      <Boards selected={currentBoardId} setCurrent={setBoard} />
       <div className="main-view-container">
         <div className="main-title-container">
           <div className="logo-buffer" style={{minHeight: "5em", minWidth: "5em"}}></div>

@@ -1,7 +1,7 @@
 import Automerge from 'automerge'
 import { makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
-// import { arrayMove } from '../../utils'
+import { arrayMove } from '../../utils.js';
 
 const changeTitleObj = makeTitleReducer("list", "lists");
 
@@ -46,15 +46,27 @@ const addCardReducer = makeSimpleReducer("card/new", (state, payload) => {
 });
 
 const moveCardReducer = makeSimpleReducer("card/move", (state, payload) => {
+  //payload is of {card, list, toIndex, toList}
+  return Automerge.change(state, doc => {
+    let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
+    console.dir({"lists":doc.lists.byId[payload.list].cards, cardIndex, "toIndex":payload.toIndex});
+    arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.toIndex);
+  });
+
+  // console.dir({"listId": payload.list, "lists": state.lists});
   // return Automerge.change(state, doc => {
-    // let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
-    // arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.index);
+  //   let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
+  //   if(payload.list === payload.toList) {
+  //     delete doc.lists.byId[payload.list].cards[cardIndex];
+  //     // arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.toIndex);
+  //   }// else {
+      
+      // doc.lists.byId[payload.toList].cards.insertAt(payload.toIndex, payload.card);
+    // }
   // });
-  return state;
 });
 
 const removeListThunk = (list) => (dispatch, getState) => {
-  console.dir(list);
   const state = getState();
   const [ board ] = state.boards.allIds.filter(
       (board) => state.boards.byId[board].lists.includes(list)
@@ -69,14 +81,17 @@ const newListThunk = (board) => (dispatch, getState) => {
   dispatch(newListObj.action({board, list}));
 };
 
-const selectListIds = (state) => {
-  return state.lists.allIds;
+export const selectListIds = (boardId) => (state) => {
+  return state.boards.byId[boardId].lists;
+}
+
+export const selectList = (listId) => (state) => {
+  return state.lists.byId[listId];
 }
 
 export const changeTitle = changeTitleObj.action;
 export const newList = newListThunk;
 export const removeList = removeListThunk;
-export const selectListIds = selectListIds;
 export default iterateReducers([
   changeTitleObj.reducer, newListObj.reducer, removeListObj.reducer,
   removeBoardReducer, removeCardReducer, addCardReducer, moveCardReducer

@@ -50,6 +50,18 @@ const newBoardThunk = () => {
   }
 }
 
+export const selectBoardsInclude = (boardId) => (state) => {
+  return state.boards.allIds.includes(boardId);
+}
+
+export const selectBoardIds = () => (state) => {
+  return state.boards.allIds;
+}
+
+export const selectBoard = (boardId) => (state) => {
+  return state.boards.byId[boardId];
+}
+
 export const changeTitle = changeTitleObj.action;
 export const newBoard = newBoardThunk;
 export const removeBoard = removeBoardThunk;

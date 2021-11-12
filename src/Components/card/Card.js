@@ -1,38 +1,38 @@
 import { SimpleTextProperty } from '../utils/SimpleTextProperty'
-import { changeTitle, removeCard } from './cardSlice'
+import { changeTitle, removeCard, selectCard, moveCard } from './cardSlice'
 import { RemoveItem } from '../utils/RemoveItem'
 import { useRef } from 'react'
-// import { useDispatch } from 'react-redux'
-import { useDrag } from 'react-dnd'
-import { useDrop } from 'react-dnd'
-// import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useDrag, useDrop } from 'react-dnd'
 import "./card.css"
+import { useSelector } from 'react-redux'
 
 export function Card(props) {
   let ref = useRef(null);
-  // let dispatch = useDispatch();
+  let card = useSelector(selectCard(props.cardId));
+  let dispatch = useDispatch();
   
   //TODO refactor this into a custom hook
   const originalIndex = props.index;
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "CARD",
     item: () => {
-      return { cardId: props.card.id,  listId: props.listId, index: props.index, originalIndex: originalIndex};
+      return { cardId: card.id,  listId: props.listId, index: props.index, originalIndex: originalIndex};
     },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging()
     }),
     end: (item, monitor) => {
       if(!monitor.didDrop()) {
-        props.move(item.listId, item.cardId, item.originalIndex);
+        props.moveCard(item.listId, item.cardId, item.originalIndex, props.listId);
       }
     }
-  }), [originalIndex]);
+  }), [originalIndex, card]);
 
   const [, drop] = useDrop(() => ({
       accept: "CARD",
       drop(item, monitor) {
-        // dispatch(moveCard(item.listId, item.cardId, item.index, props.list));
+        dispatch(moveCard(item.cardId, item.listId, props.index, props.listId));
       },
       hover(item, monitor) { //From: https://react-dnd.github.io/react-dnd/examples/sortable/simple
         if (!ref.current) {
@@ -40,7 +40,7 @@ export function Card(props) {
         }
         const dragIndex = item.index;
         const hoverIndex = props.index;
-        const hoverList = props.list;
+        const hoverList = props.listId;
         // Don't replace items with themselves
         if (dragIndex === hoverIndex) {
             return;
@@ -68,7 +68,7 @@ export function Card(props) {
             return;
         }
         // Time to actually perform the action
-        props.move(item.listId, item.cardId, hoverIndex, hoverList);
+        props.moveCard(item.listId, item.cardId, hoverIndex, hoverList);
         // Note: we're mutating the monitor item here!
         // Generally it's better to avoid mutations,
         // but it's good here for the sake of performance
@@ -76,14 +76,18 @@ export function Card(props) {
         item.index = hoverIndex;
     }
     }),
-    [props.index, props.list]
+    [props.index, props.listId]
   );
   drag(drop(ref));
 
+  if(typeof props.cardId === "undefined") {
+    return null;
+  }
+
   return (
     <div ref={ref} className="card" style={{opacity: isDragging ? 0.4 : 1}}>
-      <SimpleTextProperty action={ changeTitle } prop={ props.card.title } id={ props.card.id } />
-      <RemoveItem action={removeCard} id={props.card.id} />
+      <SimpleTextProperty action={ changeTitle } prop={ card.title } id={ card.id } />
+      <RemoveItem action={removeCard} id={card.id} />
       {/* <span onClick={e => props.move(props.card.id, props.index - 1)}>Up</span><span onClick={e => props.move(props.card.id, props.index + 1)}>Down</span> */}
     </div>
   )

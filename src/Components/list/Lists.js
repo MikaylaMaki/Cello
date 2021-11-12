@@ -1,57 +1,58 @@
 import { CelloList } from "./CelloList";
 import { NewItem } from "../utils/NewItem";
-import { newList } from "./listSlice";
+import { newList, selectListIds } from "./listSlice";
+import { useSelector } from "react-redux";
 import { arrayMove } from "../../utils";
 import { useState, useEffect } from "react";
-import { useSelector, useStore } from "react-redux";
+import { selectCardsByLists } from "../card/cardSlice"
+import { selectBoardsInclude } from "../board/boardSlice"
+import { useStore } from 'react-redux'
 
 export function Lists(props) {
-  //Solution: Make a list of indexes as the canonical ordering, BUT NOT THE DATA SOURCE. 
-  //Filter the set of data from the data source in relation to the state. Don't throw all
-  //of the object data into the state.
-  let [lists, setLists] = useState(props.lists);
+  let listIds = useSelector(selectListIds(props.boardId));
+  let store = useStore();
+  let [cardsByList, setCardsByList] = useState(useSelector(selectCardsByLists(props.boardId)));
+  
+  useEffect(() => {
+    let unsub = store.subscribe(() => {
+      let state = store.getState();
+      if(selectBoardsInclude(props.boardId)(state)) {
+        setCardsByList(selectCardsByLists(props.boardId)(state));
+      } else {
+        setCardsByList({});
+      }
+    });
+    return () => {
+      unsub();
+    }
+  }, [props.boardId, store]);
 
-  const moveBetweenLists = (fromList, fromCard, toIndex, toList) => setLists((prevLists) => {
-    // console.dir([fromList, fromCard, toIndex, toList]);
-    // let fromListIndex = lists.map((list) => list.id).indexOf(fromList);
-    // let fromCardIndex = prevLists[fromListIndex].cards.indexOf(fromCard); //TODO move this index to useSortable()
-    // if(fromList === toList) {
-      // arrayMove(prevLists[fromListIndex].cards, fromCardIndex, toIndex);
-      // return prevLists;  
-    // } else {
-      // let toListIndex = lists.map((list) => list.id).indexOf(toList);
-      // let cardObj = prevLists[fromListIndex].cards[fromCardIndex];
-      // prevLists[fromListIndex].cards.splice(fromCardIndex, 1);
-      // prevLists[toListIndex].cards.splice(toIndex, 0, cardObj);
-      // return prevLists;
+  //TODO extremely broken, reverting back to same list move semantics
+  const moveBetweenLists = (fromList, fromCard, toIndex, toList) => setCardsByList((prevCardsByList) => {
+    let fromCardIndex = prevCardsByList[fromList].indexOf(fromCard); //TODO move this index to useSortable()
+    // if(fromCardIndex === -1) {
+      // return prevCardsByList;
+    // }
+    let newCardsByList = {...prevCardsByList}
+    if(fromList === toList) {
+      arrayMove(newCardsByList[fromList], fromCardIndex, toIndex);
+      return newCardsByList;  
+    } //else {
+      // let cardId = prevCardsByList[fromList][fromCardIndex];      
+      // newCardsByList[fromList].splice(fromCardIndex, 1);   
+      // newCardsByList[toList].splice(toIndex, 0, cardId);
+      // return newCardsByList;
     // }
   });
 
-  // useEffect(() => store.subscribe(() => {
-    // let state = store.getState();
-    // setLists(state.lists.allIds.map((listId) => state.lists.byId[listId]));
-    // let listIds = lists.map((list) => list.id);
-    // if(!arraysEqual(state.lists.allIds, listIds)) {
-    //   setLists(state.lists.allIds.map((listId) => state.lists.byId[listId]));
-    // } else {
-    //   lists.every(list => {
-    //     if(!arraysEqual(list.cards, state.lists.byId[list.id].cards)) {
-          
-    //       return false;
-    //     }
-    //     return true
-    //   });
-    // }
-  // }), [props.lists, store]);
+  let listEls = listIds.map((listId) => {
+    return <CelloList key={listId} listId={listId} cardIds={cardsByList[listId]} moveCard={moveBetweenLists} />
+  })
 
-    let listEls = lists.map((list) => {
-      return <CelloList key={list.id} list={list} moveFunc={moveBetweenLists} />
-    })
-
-    return (
-      <div style={{  display: "flex", alignItems: "flex-start"}} className="list-container">
-        {listEls}
-        <NewItem action={newList} actionArg={props.boardId} />
+  return (
+    <div style={{  display: "flex", alignItems: "flex-start"}} className="list-container">
+      {listEls}
+      <NewItem action={newList} actionArg={props.boardId} />
     </div>
-    )
+  )
 }

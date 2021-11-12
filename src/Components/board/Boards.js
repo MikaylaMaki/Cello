@@ -2,18 +2,20 @@ import { BoardButton } from './BoardButton';
 // import { NewBoard } from './NewBoard';
 import { NewItem } from '../utils/NewItem';
 import './board.css'
-import { newBoard } from './boardSlice';
+import { newBoard, selectBoardIds } from './boardSlice';
+import { useSelector } from 'react-redux';
 
 export function Boards(props) {
+  let boardIds = useSelector(selectBoardIds());
   let boardEls = null;
   let clickMe = null;
-  if(props.boards.allIds.length > 0) {
-    boardEls = props.boards.allIds.map((boardId) => {
-      let board = props.boards.byId[boardId];
+
+  if(boardIds.length > 0) {
+    boardEls = boardIds.map((boardId) => {
       if(props.selected && boardId === props.selected) {
-        return <BoardButton selected={true} key={boardId} board={board} setCurrent={props.setCurrent} />
+        return <BoardButton selected={true} key={boardId} id={boardId} setCurrent={props.setCurrent} />
       } else {
-        return <BoardButton key={boardId} board={board} setCurrent={props.setCurrent}/>
+        return <BoardButton                 key={boardId} id={boardId} setCurrent={props.setCurrent} />
       }
     })
   } else {

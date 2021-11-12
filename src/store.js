@@ -5,7 +5,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import cardReducer from './components/card/cardSlice'
 import listReducer from './components/list/listSlice'
 import boardReducer from './components/board/boardSlice'
-import {loadState, saveState, blankState, loadReducer} from './storage'
+import { loadState, saveState, blankState, loadReducer } from './storage'
 import { iterateReducers } from './redux-utils.js'
 
 const store = createStore(
