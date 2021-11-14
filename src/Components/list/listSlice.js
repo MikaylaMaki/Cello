@@ -1,7 +1,7 @@
 import Automerge from 'automerge'
 import { makeSimpleReducer, makeReducerAction, iterateReducers, removeFromList, makeTitleReducer } from "../../redux-utils.js";
 import { nanoid } from 'nanoid'
-import { arrayMove } from '../../utils.js';
+// import { arrayMove } from '../../utils.js';
 
 const changeTitleObj = makeTitleReducer("list", "lists");
 
@@ -33,7 +33,6 @@ const removeBoardReducer = makeSimpleReducer("board/remove", (state, payload) =>
 });
 
 const removeCardReducer = makeSimpleReducer("card/remove", (state, payload) => {
-  console.dir(payload);
   return Automerge.change(state, (doc) => {
     removeFromList(doc.lists.byId[payload.list].cards, payload.card);
   });
@@ -48,10 +47,15 @@ const addCardReducer = makeSimpleReducer("card/new", (state, payload) => {
 const moveCardReducer = makeSimpleReducer("card/move", (state, payload) => {
   //payload is of {card, list, toIndex, toList}
   return Automerge.change(state, doc => {
-    let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
-    console.dir({"lists":doc.lists.byId[payload.list].cards, cardIndex, "toIndex":payload.toIndex});
-    arrayMove(doc.lists.byId[payload.list].cards, cardIndex, payload.toIndex);
-  });
+    // let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
+    // doc.lists.byId[payload.list].cards.deleteAt(cardIndex);
+    removeFromList(doc.lists.byId[payload.list].cards, payload.card);
+  }); 
+  // return  Automerge.change(state, doc => {
+    // let cardIndex = doc.lists.byId[payload.list].cards.indexOf(payload.card);
+    // doc.lists.byId[payload.list].cards.deleteAt(cardIndex);
+    // doc.lists.byId[payload.list].cards.insertAt(payload.toIndex, payload.card);
+  // }); 
 
   // console.dir({"listId": payload.list, "lists": state.lists});
   // return Automerge.change(state, doc => {

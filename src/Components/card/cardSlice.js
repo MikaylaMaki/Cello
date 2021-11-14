@@ -31,11 +31,12 @@ const removeBoardReducer = makeSimpleReducer("board/remove", (state, payload) =>
 });
 
 const removeListReducer = makeSimpleReducer("list/remove", (state, payload) => {
-  return Automerge.change(state, doc => {
-    payload.cards.forEach((card) => {
+  payload.cards.forEach((card) => {
+    state =  Automerge.change(state, doc => {
       delete doc.cards.byId[card];
     });
   });
+  return state;
 });
 
 //Don't need to implement the reducers as the card doesn't actually have it's positional data
@@ -55,7 +56,13 @@ const newCardThunk = (list) => (dispatch, getState) => {
 }
 
 const moveCardThunk = (card, list, toIndex, toList) => (dispatch, getState) => {
+  let state = getState();
+  console.log("BEFORE: ");
+  console.dir(state.lists.byId);
   dispatch(moveCardAction({card, list, toIndex, toList}));
+  console.log("AFTER: ");
+  state = getState();
+  console.dir(state.lists.byId);
 }
 
 export const selectCardIds = (listId) => (state) => {

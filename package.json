@@ -49,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.16.0",
     "eslint-plugin-react-hooks": "^4.2.0"
   }
 }
