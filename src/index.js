@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import store from './store'
-import { Cello } from './components/Cello';
+import { Cello } from './Components/Cello';
 import './index.css';
 
 import reportWebVitals from './reportWebVitals';

@@ -2,9 +2,9 @@ import thunk from 'redux-thunk'
 import throttle from 'lodash/throttle'
 import { createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension';
-import cardReducer from './components/card/cardSlice'
-import listReducer from './components/list/listSlice'
-import boardReducer from './components/board/boardSlice'
+import cardReducer from './Components/card/cardSlice'
+import listReducer from './Components/list/listSlice'
+import boardReducer from './Components/board/boardSlice'
 import { loadState, saveState, blankState, loadReducer } from './storage'
 import { iterateReducers } from './redux-utils.js'
 
