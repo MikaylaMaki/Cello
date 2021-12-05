@@ -5,6 +5,7 @@ import './base.css'
 import { useEffect, useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { selectBoardsInclude } from './board/boardSlice';
+import { Settings } from './Settings/Settings'
 
 export function Cello() {
   let boardTitleEl = null;
@@ -37,7 +38,7 @@ export function Cello() {
 
   
   if(isBoardIncluded) {
-    boardTitleEl = <BoardTitle boardId={currentBoardId} />
+    boardTitleEl = <><Settings /><BoardTitle boardId={currentBoardId} /></>
 
     listsEl = (
       <Lists boardId={currentBoardId} key={currentBoardId} />
